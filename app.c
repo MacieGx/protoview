@@ -246,7 +246,7 @@ int32_t protoview_app_entry(void* p) {
 
             /* Handle navigation here. Then handle view-specific inputs
              * in the view specific handling function. */
-            if (input.type == InputTypeShort &&
+            if (input.type == InputTypeLong &&
                 input.key == InputKeyBack)
             {
                 /* Exit the app. */
