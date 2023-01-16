@@ -6,6 +6,8 @@
 
 #include "../app.h"
 
+ProtoViewDecoder Oregon2Decoder;
+
 static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoViewMsgInfo *info) {
     if (numbits < 32) return false;
     const char *sync_pattern = "01100110" "01100110" "10010110" "10010110";
@@ -45,6 +47,7 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
         }
     }
 
+    info->decoder = &Oregon2Decoder;
     snprintf(info->name,sizeof(info->name),"%s","Oregon v2.1");
     /* The following line crashes the Flipper because of broken
      * snprintf() implementation. */
@@ -60,6 +63,18 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     return true;
 }
 
+static char* get_value_for(int valueIndex, ProtoViewMsgInfo* info) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    return "NotImplementedYet";
+}
+
+static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    UNUSED(up);
+}
+
 ProtoViewDecoder Oregon2Decoder = {
-    "Oregon2", decode
+    "Oregon2", decode, 0, {}, get_value_for, update_value_for
 };

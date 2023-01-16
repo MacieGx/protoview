@@ -10,6 +10,8 @@
 
 #include "../../app.h"
 
+ProtoViewDecoder SchraderTPMSDecoder;
+
 #define USE_TEST_VECTOR 0
 static const char *test_vector = "000000111101010101011010010110010110101001010110100110011001100101010101011010100110100110011010101010101010101010101010101010101010101010101010";
 
@@ -49,6 +51,7 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     float kpa = (float)raw[5]*2.5;
     int temp = raw[6]-50;
 
+    info->decoder = &SchraderTPMSDecoder;
     snprintf(info->name,sizeof(info->name),"%s","Schrader TPMS");
     snprintf(info->raw,sizeof(info->raw),"%02X%02X%02X%02X%02X%02X%02X%02X",
         raw[0],raw[1],raw[2],raw[3],raw[4],raw[5],
@@ -60,6 +63,18 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     return true;
 }
 
+static char* get_value_for(int valueIndex, ProtoViewMsgInfo* info) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    return "NotImplementedYet";
+}
+
+static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    UNUSED(up);
+}
+
 ProtoViewDecoder SchraderTPMSDecoder = {
-    "Schrader TPMS", decode
+    "Schrader TPMS", decode, 0, {}, get_value_for, update_value_for
 };

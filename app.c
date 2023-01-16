@@ -53,6 +53,7 @@ static void render_callback(Canvas *const canvas, void *ctx) {
     switch(app->current_view) {
     case ViewRawPulses: render_view_raw_pulses(canvas,app); break;
     case ViewInfo: render_view_info(canvas,app); break;
+    case ViewResend: render_view_resend(canvas, app); break;
     case ViewFrequencySettings:
     case ViewModulationSettings:
         render_view_settings(canvas,app); break;
@@ -252,12 +253,14 @@ int32_t protoview_app_entry(void* p) {
                 /* Exit the app. */
                 app->running = 0;
             } else if (input.type == InputTypeShort &&
-                       input.key == InputKeyRight)
+                       input.key == InputKeyRight &&
+                       app->current_view != ViewResend)
             {
                 /* Go to the next view. */
                 app_switch_view(app,AppNextView);
             } else if (input.type == InputTypeShort &&
-                       input.key == InputKeyLeft)
+                       input.key == InputKeyLeft &&
+                       app->current_view != ViewResend)
             {
                 /* Go to the previous view. */
                 app_switch_view(app,AppPrevView);
@@ -270,6 +273,9 @@ int32_t protoview_app_entry(void* p) {
                     break;
                 case ViewInfo:
                     process_input_info(app,input);
+                    break;
+                case ViewResend:
+                    process_input_resend(app, input);
                     break;
                 case ViewFrequencySettings:
                 case ViewModulationSettings:

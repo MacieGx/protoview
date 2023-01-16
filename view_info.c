@@ -32,11 +32,9 @@ void render_view_info(Canvas *const canvas, ProtoViewApp *app) {
 }
 
 /* Handle input for the info view. */
-void process_input_info(ProtoViewApp *app, InputEvent input) {
-    if (input.type == InputTypeShort) {
-        if (input.key == InputKeyOk) {
-            /* Reset the current sample to capture the next. */
-            reset_current_signal(app);
-        }
+void process_input_info(ProtoViewApp* app, InputEvent input) {
+    if (input.type == InputTypePress && input.key == InputKeyOk && app->signal_decoded && app->signal_info.decoder->dynamic_values_len > 0) {
+        app->current_view = ViewResend;
     }
 }
+

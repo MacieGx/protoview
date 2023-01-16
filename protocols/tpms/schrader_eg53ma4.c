@@ -15,6 +15,8 @@
 
 #include "../../app.h"
 
+ProtoViewDecoder SchraderEG53MA4TPMSDecoder;
+
 static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoViewMsgInfo *info) {
 
     const char *sync_pattern = "010101010101" "01100101";
@@ -47,6 +49,7 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     int temp_f = raw[8];
     int temp_c = (temp_f-32)*5/9; /* Convert Fahrenheit to Celsius. */
 
+    info->decoder = &SchraderEG53MA4TPMSDecoder;
     snprintf(info->name,sizeof(info->name),"%s","Schrader EG53MA4 TPMS");
     snprintf(info->raw,sizeof(info->raw),"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
         raw[0],raw[1],raw[2],raw[3],raw[4],raw[5],
@@ -58,6 +61,18 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     return true;
 }
 
+static char* get_value_for(int valueIndex, ProtoViewMsgInfo* info) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    return "NotImplementedYet";
+}
+
+static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    UNUSED(up);
+}
+
 ProtoViewDecoder SchraderEG53MA4TPMSDecoder = {
-    "Schrader EG53MA4 TPMS", decode
+    "Schrader EG53MA4 TPMS", decode, 0, {}, get_value_for, update_value_for
 };

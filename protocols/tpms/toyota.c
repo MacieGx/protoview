@@ -24,6 +24,8 @@
 
 #include "../../app.h"
 
+ProtoViewDecoder ToyotaTPMSDecoder;
+
 static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoViewMsgInfo *info) {
 
     if (numbits-6 < 64*2) return false; /* Ask for 64 bit of data (each bit
@@ -61,6 +63,7 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     float kpa = (float)((raw[4]&0x7f)<<1 | raw[5]>>7) * 0.25 - 7;
     int temp = ((raw[5]&0x7f)<<1 | raw[6]>>7) - 40;
 
+    info->decoder = &ToyotaTPMSDecoder;
     snprintf(info->name,sizeof(info->name),"%s","Toyota TPMS");
     snprintf(info->raw,sizeof(info->raw),"%02X%02X%02X%02X%02X%02X%02X%02X%02X",
         raw[0],raw[1],raw[2],raw[3],raw[4],raw[5],
@@ -72,6 +75,18 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     return true;
 }
 
+static char* get_value_for(int valueIndex, ProtoViewMsgInfo* info) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    return "NotImplementedYet";
+}
+
+static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    UNUSED(up);
+}
+
 ProtoViewDecoder ToyotaTPMSDecoder = {
-    "Toyota TPMS", decode
+    "Toyota TPMS", decode, 0, {}, get_value_for, update_value_for
 };

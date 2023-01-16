@@ -24,6 +24,8 @@
 
 #include "../app.h"
 
+ProtoViewDecoder KeeloqDecoder;
+
 static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoViewMsgInfo *info) {
 
     /* In the sync pattern, we require the 12 high/low pulses and at least
@@ -68,6 +70,7 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
                      (raw[4] << 0);
     int lowbat = raw[8]&0x80;
 
+    info->decoder = &KeeloqDecoder;
     snprintf(info->name,sizeof(info->name),"%s","Keeloq remote");
     snprintf(info->raw,sizeof(info->raw),"%02X%02X%02X%02X%02X%02X%02X%02X%02X",
         raw[0],raw[1],raw[2],raw[3],raw[4],raw[5],
@@ -82,6 +85,18 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     return true;
 }
 
+static char* get_value_for(int valueIndex, ProtoViewMsgInfo* info) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    return "NotImplementedYet";
+}
+
+static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    UNUSED(up);
+}
+
 ProtoViewDecoder KeeloqDecoder = {
-    "Keeloq", decode
+    "Keeloq", decode, 0, {}, get_value_for, update_value_for
 };

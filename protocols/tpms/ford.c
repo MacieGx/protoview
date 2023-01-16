@@ -10,6 +10,8 @@
 
 #include "../../app.h"
 
+ProtoViewDecoder FordTPMSDecoder;
+
 static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoViewMsgInfo *info) {
 
     const char *sync_pattern = "010101010101" "0110";
@@ -44,6 +46,7 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     int flags = raw[5] & 0x7f;
     int car_moving = (raw[6] & 0x44) == 0x44;
 
+    info->decoder = &FordTPMSDecoder;
     snprintf(info->name,sizeof(info->name),"%s","Ford TPMS");
     snprintf(info->raw,sizeof(info->raw),"%02X%02X%02X%02X%02X%02X%02X%02X",
         raw[0],raw[1],raw[2],raw[3],raw[4],raw[5],
@@ -59,6 +62,18 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     return true;
 }
 
+static char* get_value_for(int valueIndex, ProtoViewMsgInfo* info) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    return "NotImplementedYet";
+}
+
+static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    UNUSED(up);
+}
+
 ProtoViewDecoder FordTPMSDecoder = {
-    "Ford TPMS", decode
+    "Ford TPMS", decode, 0, {}, get_value_for, update_value_for
 };

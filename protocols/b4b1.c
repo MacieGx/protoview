@@ -9,6 +9,8 @@
 
 #include "../app.h"
 
+ProtoViewDecoder B4B1Decoder;
+
 static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoViewMsgInfo *info) {
     if (numbits < 30) return false;
     const char *sync_patterns[3] = {
@@ -33,12 +35,27 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
 
     if (DEBUG_MSG) FURI_LOG_E(TAG, "B4B1 decoded: %lu",decoded);
     if (decoded != 24) return false;
+
+    info->decoder = &B4B1Decoder;
     snprintf(info->name,PROTOVIEW_MSG_STR_LEN,"PT/SC remote");
     snprintf(info->raw,PROTOVIEW_MSG_STR_LEN,"%02X%02X%02X",d[0],d[1],d[2]);
     info->len = off+(4*24);
     return true;
 }
 
+static char* get_value_for(int valueIndex, ProtoViewMsgInfo* info) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    return "NotImplementedYet";
+}
+
+static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    UNUSED(up);
+}
+
+
 ProtoViewDecoder B4B1Decoder = {
-    "B4B1", decode
+    "B4B1", decode, 0, {}, get_value_for, update_value_for
 };

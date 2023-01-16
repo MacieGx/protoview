@@ -7,6 +7,8 @@
 
 #include "../../app.h"
 
+ProtoViewDecoder CitroenTPMSDecoder;
+
 static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoViewMsgInfo *info) {
 
     /* We consider a preamble of 17 symbols. They are more, but the decoding
@@ -42,6 +44,7 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     int temp = raw[7]-50;
     int battery = raw[8]; /* This may be the battery. It's not clear. */
 
+    info->decoder = &CitroenTPMSDecoder;
     snprintf(info->name,sizeof(info->name),"%s","Citroen TPMS");
     snprintf(info->raw,sizeof(info->raw),
         "%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
@@ -55,6 +58,18 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     return true;
 }
 
+static char* get_value_for(int valueIndex, ProtoViewMsgInfo* info) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    return "NotImplementedYet";
+}
+
+static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    UNUSED(up);
+}
+
 ProtoViewDecoder CitroenTPMSDecoder = {
-    "Citroen TPMS", decode
+    "Citroen TPMS", decode, 0, {}, get_value_for, update_value_for
 };

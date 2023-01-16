@@ -45,6 +45,8 @@ typedef enum {
     ViewModulationSettings,
     ViewDirectSampling,
     ViewLast, /* Just a sentinel to wrap around. */
+    ViewResend, /* ViewResend is opened by pressing the OK button in the ViewInfo.
+                For this reason, it must be behind ViewLast so that the view cannot be opened by using the arrows.  */
 } ProtoViewCurrentView;
 
 /* Used by app_switch_view() */
@@ -84,11 +86,15 @@ struct ProtoViewTxRx {
 
 typedef struct ProtoViewTxRx ProtoViewTxRx;
 
+typedef struct ProtoViewDecoder ProtoViewDecoder;
+
 /* This stucture is filled by the decoder for specific protocols with the
  * informations about the message. ProtoView will display such information
  * in the message info view. */
 #define PROTOVIEW_MSG_STR_LEN 32
+#define PROTOVIEW_BUF_MAX_LEN 32
 typedef struct ProtoViewMsgInfo {
+    ProtoViewDecoder* decoder;
     char name[PROTOVIEW_MSG_STR_LEN]; /* Protocol name and version. */
     char raw[PROTOVIEW_MSG_STR_LEN]; /* Protocol specific raw representation.*/
     /* The following is what the decoder wants to show to user. Each decoder
@@ -98,6 +104,18 @@ typedef struct ProtoViewMsgInfo {
     char info3[PROTOVIEW_MSG_STR_LEN]; /* Protocol specific info line 3. */
     char info4[PROTOVIEW_MSG_STR_LEN]; /* Protocol specific info line 4. */
     uint64_t len;       /* Bits consumed from the stream. */
+
+    /* TODO: This struct is probably not a very good solution. But I can't come up with a better solution. This should be improved. */
+    struct {
+        uint8_t buf[PROTOVIEW_BUF_MAX_LEN];
+
+        // Key Fob data
+        uint8_t btn;
+        uint32_t counter;
+
+        // TPMS Data
+        uint32_t temperature;
+    } protocol_data;
 } ProtoViewMsgInfo;
 
 struct ProtoViewApp {
@@ -130,8 +148,11 @@ struct ProtoViewApp {
     uint32_t frequency;      /* Current frequency. */
     uint8_t modulation;      /* Current modulation ID, array index in the
                                 ProtoViewModulations table. */
+
+    int current_value_index; /* Index of the current value used in the ViewResend */
 };
 
+#define PROTOVIEW_DYNAMIC_VALUE_STR_LEN 32
 typedef struct ProtoViewDecoder {
     const char *name;   /* Protocol name. */
     /* The decode function takes a buffer that is actually a bitmap, with
@@ -142,6 +163,13 @@ typedef struct ProtoViewDecoder {
      * functions that perform bit extraction with bound checking, such as
      * bitmap_get() and so forth. */
     bool (*decode)(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoViewMsgInfo *info);
+
+    // TODO: Add comments for this stuff (macieg)
+    const int dynamic_values_len;
+    const char* dynamic_values_names[PROTOVIEW_DYNAMIC_VALUE_STR_LEN];
+
+    char* (*get_value_for)(int valueIndex, ProtoViewMsgInfo* info);
+    void (*update_value_for)(int valueIndex, ProtoViewMsgInfo* info, bool up);
 } ProtoViewDecoder;
 
 extern RawSamplesBuffer *RawSamples, *DetectedSamples;
@@ -175,6 +203,8 @@ void render_view_settings(Canvas *const canvas, ProtoViewApp *app);
 void process_input_settings(ProtoViewApp *app, InputEvent input);
 void render_view_info(Canvas *const canvas, ProtoViewApp *app);
 void process_input_info(ProtoViewApp *app, InputEvent input);
+void render_view_resend(Canvas* const canvas, ProtoViewApp* app);
+void process_input_resend(ProtoViewApp* app, InputEvent input);
 void render_view_direct_sampling(Canvas *const canvas, ProtoViewApp *app);
 void process_input_direct_sampling(ProtoViewApp *app, InputEvent input);
 void view_enter_direct_sampling(ProtoViewApp *app);

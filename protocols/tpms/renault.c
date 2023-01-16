@@ -5,6 +5,8 @@
 
 #include "../../app.h"
 
+ProtoViewDecoder RenaultTPMSDecoder;
+
 #define USE_TEST_VECTOR 0
 static const char *test_vector =
     "...01010101010101010110" // Preamble + sync
@@ -50,6 +52,7 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     float kpa = 0.75 *((uint32_t)((raw[0]&3)<<8) | raw[1]);
     int temp = raw[2]-30;
 
+    info->decoder = &RenaultTPMSDecoder;
     snprintf(info->name,sizeof(info->name),"%s","Renault TPMS");
     snprintf(info->raw,sizeof(info->raw),"%02X%02X%02X%02X%02X%02X%02X%02X%02X",
         raw[0],raw[1],raw[2],raw[3],raw[4],raw[5],
@@ -61,6 +64,18 @@ static bool decode(uint8_t *bits, uint32_t numbytes, uint32_t numbits, ProtoView
     return true;
 }
 
+static char* get_value_for(int valueIndex, ProtoViewMsgInfo* info) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    return "NotImplementedYet";
+}
+
+static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
+    UNUSED(valueIndex);
+    UNUSED(info);
+    UNUSED(up);
+}
+
 ProtoViewDecoder RenaultTPMSDecoder = {
-    "Renault TPMS", decode
+    "Renault TPMS", decode, 0, {}, get_value_for, update_value_for
 };
