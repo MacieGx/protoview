@@ -76,6 +76,11 @@ static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
     UNUSED(up);
 }
 
+static void get_raw_data_payload(ProtoViewMsgInfo* info, FuriString* out_payload) {
+    UNUSED(info);
+    UNUSED(out_payload);
+}
+
 ProtoViewDecoder RenaultTPMSDecoder = {
-    "Renault TPMS", decode, 0, {}, get_value_for, update_value_for
+    "Renault TPMS", decode, 0, {}, get_value_for, update_value_for, get_raw_data_payload
 };

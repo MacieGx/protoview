@@ -55,7 +55,12 @@ static void update_value_for(int valueIndex, ProtoViewMsgInfo* info, bool up) {
     UNUSED(up);
 }
 
+static void get_raw_data_payload(ProtoViewMsgInfo* info, FuriString* out_payload) {
+    UNUSED(info);
+    UNUSED(out_payload);
+}
+
 
 ProtoViewDecoder B4B1Decoder = {
-    "B4B1", decode, 0, {}, get_value_for, update_value_for
+    "B4B1", decode, 0, {}, get_value_for, update_value_for, get_raw_data_payload
 };

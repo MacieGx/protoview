@@ -34,6 +34,7 @@ typedef struct ProtoViewApp ProtoViewApp;
 typedef enum {
     TxRxStateIDLE,
     TxRxStateRx,
+    TxRxStateTx,
     TxRxStateSleep,
 } TxRxState;
 
@@ -170,6 +171,7 @@ typedef struct ProtoViewDecoder {
 
     char* (*get_value_for)(int valueIndex, ProtoViewMsgInfo* info);
     void (*update_value_for)(int valueIndex, ProtoViewMsgInfo* info, bool up);
+    void (*get_raw_data_payload)(ProtoViewMsgInfo* info, FuriString* out_payload);
 } ProtoViewDecoder;
 
 extern RawSamplesBuffer *RawSamples, *DetectedSamples;
